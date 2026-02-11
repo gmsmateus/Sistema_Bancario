@@ -11,6 +11,19 @@ public class BancoService {
     private List<Conta> contas = new ArrayList<>();
 
     public void adicionarConta(Conta conta) {
+
+        // Verificar número duplicado
+        for (Conta c : contas) {
+            if (c.getNumero() == conta.getNumero()) {
+                throw new IllegalArgumentException("Já existe uma conta com esse número.");
+            }
+
+            // Verificar CPF duplicado
+            if (c.getCliente().getCpf().equals(conta.getCliente().getCpf())) {
+                throw new IllegalArgumentException("Já existe uma conta com esse CPF.");
+            }
+        }
+
         contas.add(conta);
     }
 

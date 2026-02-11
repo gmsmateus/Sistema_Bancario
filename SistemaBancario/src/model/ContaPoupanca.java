@@ -7,8 +7,13 @@ public class ContaPoupanca extends Conta {
     }
 
     public void aplicarRendimento(double taxa) {
-        if (taxa > 0) {
-            saldo += saldo * taxa;
+        if (taxa <= 0) {
+            throw new IllegalArgumentException("Taxa deve ser positiva.");
         }
+
+        double rendimento = saldo * taxa;
+        saldo += rendimento;
+
+        historico.add(new Transacao("Rendimento aplicado", rendimento));
     }
 }

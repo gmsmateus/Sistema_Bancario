@@ -1,12 +1,16 @@
 package model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Transacao {
 
     private String tipo;
     private double valor;
     private LocalDateTime data;
+
+    private static final DateTimeFormatter formatter =
+            DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
     public Transacao(String tipo, double valor) {
         this.tipo = tipo;
@@ -16,6 +20,6 @@ public class Transacao {
 
     @Override
     public String toString() {
-        return data + " - " + tipo + " - R$ " + valor;
+        return data.format(formatter) + " - " + tipo + " - R$ " + String.format("%.2f", valor);
     }
 }
