@@ -26,6 +26,10 @@ public class BancoService {
     public void transferir(int numeroOrigem, int numeroDestino, double valor)
             throws ContaNaoEncontradaException, SaldoInsuficienteException {
 
+        if (valor <= 0) {
+            throw new IllegalArgumentException("Valor de transferência deve ser positivo.");
+        }
+
         Conta origem = buscarConta(numeroOrigem);
         Conta destino = buscarConta(numeroDestino);
 

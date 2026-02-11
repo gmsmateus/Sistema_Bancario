@@ -19,6 +19,7 @@ public class App {
         banco.adicionarConta(conta2);
 
         conta1.depositar(1000);
+        conta1.depositar(-100);
 
         try {
             banco.transferir(1, 2, 300);
