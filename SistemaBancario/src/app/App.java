@@ -1,26 +1,30 @@
 package app;
 
 import model.*;
-import exception.SaldoInsuficienteException;
+import service.BancoService;
+import exception.*;
 
 public class App {
     public static void main(String[] args) {
 
-        Cliente cliente = new Cliente("Mateus", "123");
+        BancoService banco = new BancoService();
 
-        Conta conta1 = new ContaCorrente(1, cliente);
-        ContaPoupanca conta2 = new ContaPoupanca(2, cliente);
+        Cliente cliente1 = new Cliente("Mateus", "123");
+        Cliente cliente2 = new Cliente("Ana", "456");
 
-        conta1.depositar(500);
+        Conta conta1 = new ContaCorrente(1, cliente1);
+        Conta conta2 = new ContaPoupanca(2, cliente2);
+
+        banco.adicionarConta(conta1);
+        banco.adicionarConta(conta2);
+
+        conta1.depositar(1000);
 
         try {
-            conta1.sacar(200);
-        } catch (SaldoInsuficienteException e) {
+            banco.transferir(1, 2, 300);
+        } catch (ContaNaoEncontradaException | SaldoInsuficienteException e) {
             System.out.println(e.getMessage());
         }
-
-        conta2.depositar(1000);
-        conta2.aplicarRendimento(0.05);
 
         System.out.println(conta1);
         System.out.println(conta2);
