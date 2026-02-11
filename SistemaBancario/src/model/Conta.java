@@ -55,6 +55,23 @@ public abstract class Conta {
         historico.add(new Transacao("Saque", valor));
     }
 
+    public void exibirExtrato() {
+        System.out.println("Extrato da Conta " + numero);
+        System.out.println("Cliente: " + cliente.getNome());
+        System.out.println("----------------------------------");
+
+        if (historico.isEmpty()) {
+            System.out.println("Nenhuma transação realizada.");
+        } else {
+            for (Transacao t : historico) {
+                System.out.println(t);
+            }
+        }   
+
+        System.out.println("----------------------------------");
+        System.out.println("Saldo atual: R$ " + saldo);
+    }
+
     @Override
     public String toString() {
         return "Conta{" +

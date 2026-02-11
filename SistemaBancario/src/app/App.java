@@ -2,32 +2,111 @@ package app;
 
 import model.*;
 import service.BancoService;
-import exception.*;
+//import exception.*;
+import java.util.Scanner;
 
 public class App {
+
     public static void main(String[] args) {
 
+        Scanner scanner = new Scanner(System.in);
         BancoService banco = new BancoService();
 
-        Cliente cliente1 = new Cliente("Mateus", "123");
-        Cliente cliente2 = new Cliente("Ana", "456");
+        boolean rodando = true;
 
-        Conta conta1 = new ContaCorrente(1, cliente1);
-        Conta conta2 = new ContaPoupanca(2, cliente2);
+        while (rodando) {
 
-        banco.adicionarConta(conta1);
-        banco.adicionarConta(conta2);
+            System.out.println("\n===== SISTEMA BANCÁRIO =====");
+            System.out.println("1 - Criar conta");
+            System.out.println("2 - Depositar");
+            System.out.println("3 - Sacar");
+            System.out.println("4 - Transferir");
+            System.out.println("5 - Ver extrato");
+            System.out.println("0 - Sair");
+            System.out.print("Escolha uma opção: ");
 
-        conta1.depositar(1000);
-        conta1.depositar(-100);
+            int opcao = scanner.nextInt();
+            scanner.nextLine(); // limpar buffer
 
-        try {
-            banco.transferir(1, 2, 300);
-        } catch (ContaNaoEncontradaException | SaldoInsuficienteException e) {
-            System.out.println(e.getMessage());
+            try {
+
+                switch (opcao) {
+
+                    case 1:
+                        System.out.print("Número da conta: ");
+                        int numero = scanner.nextInt();
+                        scanner.nextLine(); // limpar buffer
+
+                        System.out.print("Nome do cliente: ");
+                        String nome = scanner.nextLine();
+
+                        System.out.print("CPF do cliente: ");
+                        String cpf = scanner.nextLine();
+
+                        Cliente cliente = new Cliente(nome, cpf);
+                        Conta conta = new ContaCorrente(numero, cliente);
+
+                        banco.adicionarConta(conta);
+                        System.out.println("Conta criada com sucesso!");
+                        break;
+
+                    case 2:
+                        System.out.print("Número da conta: ");
+                        int numDep = scanner.nextInt();
+
+                        System.out.print("Valor do depósito: ");
+                        double valorDep = scanner.nextDouble();
+
+                        banco.buscarConta(numDep).depositar(valorDep);
+                        System.out.println("Depósito realizado!");
+                        break;
+
+                    case 3:
+                        System.out.print("Número da conta: ");
+                        int numSaq = scanner.nextInt();
+
+                        System.out.print("Valor do saque: ");
+                        double valorSaq = scanner.nextDouble();
+
+                        banco.buscarConta(numSaq).sacar(valorSaq);
+                        System.out.println("Saque realizado!");
+                        break;
+
+                    case 4:
+                        System.out.print("Conta origem: ");
+                        int origem = scanner.nextInt();
+
+                        System.out.print("Conta destino: ");
+                        int destino = scanner.nextInt();
+
+                        System.out.print("Valor: ");
+                        double valor = scanner.nextDouble();
+
+                        banco.transferir(origem, destino, valor);
+                        System.out.println("Transferência realizada!");
+                        break;
+
+                    case 5:
+                        System.out.print("Número da conta: ");
+                        int numExt = scanner.nextInt();
+
+                        banco.buscarConta(numExt).exibirExtrato();
+                        break;
+
+                    case 0:
+                        rodando = false;
+                        System.out.println("Encerrando sistema...");
+                        break;
+
+                    default:
+                        System.out.println("Opção inválida.");
+                }
+
+            } catch (Exception e) {
+                System.out.println("Erro: " + e.getMessage());
+            }
         }
 
-        System.out.println(conta1);
-        System.out.println(conta2);
+        scanner.close();
     }
 }
