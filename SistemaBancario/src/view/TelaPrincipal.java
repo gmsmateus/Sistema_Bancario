@@ -2,145 +2,133 @@ package view;
 
 import model.*;
 import service.*;
-//import exception.*; 
 import javax.swing.*;
 import java.awt.*;
 
 public class TelaPrincipal extends JFrame {
-
     private BancoService banco = new BancoService();
     private JTextArea areaTexto;
 
     public TelaPrincipal() {
         PersistenciaService.carregar(banco);
 
-        setTitle("Sistema Bancário - Projeto Estágio");
-        setSize(600, 400);
+        setTitle("Sistema Bancário Pro - Mateus Gomes");
+        setSize(700, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
+        // Estilização da área de texto
         areaTexto = new JTextArea();
         areaTexto.setEditable(false);
-        areaTexto.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        areaTexto.setBackground(new Color(245, 245, 245));
+        areaTexto.setFont(new Font("Monospaced", Font.PLAIN, 13));
         add(new JScrollPane(areaTexto), BorderLayout.CENTER);
 
-        JPanel painelBotoes = new JPanel(new GridLayout(2, 3, 10, 10));
-        
-        JButton btnCriar = new JButton("Criar Conta");
-        JButton btnDepositar = new JButton("Depositar");
-        JButton btnSacar = new JButton("Sacar");
-        JButton btnTransferir = new JButton("Transferir");
-        JButton btnExtrato = new JButton("Ver Extrato");
-        JButton btnSalvar = new JButton("Salvar e Sair");
+        // Painel de botões organizado
+        JPanel painelBotoes = new JPanel(new GridLayout(3, 3, 8, 8));
+        painelBotoes.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JButton btnCriar = new JButton("Nova Conta");
+        JButton btnDep = new JButton("Depositar");
+        JButton btnSaq = new JButton("Sacar");
+        JButton btnTrans = new JButton("Transferir");
+        JButton btnExt = new JButton("Ver Extrato");
+        JButton btnRend = new JButton("Render (Poupança)");
+        JButton btnSair = new JButton("Salvar e Sair");
 
         painelBotoes.add(btnCriar);
-        painelBotoes.add(btnDepositar);
-        painelBotoes.add(btnSacar);
-        painelBotoes.add(btnTransferir);
-        painelBotoes.add(btnExtrato);
-        painelBotoes.add(btnSalvar);
+        painelBotoes.add(btnDep);
+        painelBotoes.add(btnSaq);
+        painelBotoes.add(btnTrans);
+        painelBotoes.add(btnExt);
+        painelBotoes.add(btnRend);
+        painelBotoes.add(btnSair);
 
         add(painelBotoes, BorderLayout.SOUTH);
 
-        // Ações
+        // Ações dos Botões
         btnCriar.addActionListener(e -> criarConta());
-        btnDepositar.addActionListener(e -> depositar());
-        btnSacar.addActionListener(e -> sacar());
-        btnTransferir.addActionListener(e -> transferir());
-        btnExtrato.addActionListener(e -> verExtrato());
-        
-        btnSalvar.addActionListener(e -> {
+        btnDep.addActionListener(e -> depositar());
+        btnSaq.addActionListener(e -> sacar());
+        btnTrans.addActionListener(e -> transferir());
+        btnExt.addActionListener(e -> verExtrato());
+        btnRend.addActionListener(e -> aplicarRendimento());
+        btnSair.addActionListener(e -> {
             PersistenciaService.salvar(banco.getContas());
-            JOptionPane.showMessageDialog(this, "Dados salvos com sucesso!");
             System.exit(0);
         });
 
-        // Corrigido o aninhamento aqui
+        // Salvar ao fechar no "X"
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
-            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+            public void windowClosing(java.awt.event.WindowEvent e) {
                 PersistenciaService.salvar(banco.getContas());
-                System.out.println("Dados salvos automaticamente ao fechar.");
             }
         });
     }
 
     private void criarConta() {
         try {
-            String nome = JOptionPane.showInputDialog("Nome do cliente:");
+            String[] tipos = {"Corrente", "Poupança"};
+            int tipo = JOptionPane.showOptionDialog(null, "Tipo de conta:", "Cadastro", 0, 1, null, tipos, tipos[0]);
+            if (tipo == -1) return;
+
+            String nome = JOptionPane.showInputDialog("Nome do titular:");
             String cpf = JOptionPane.showInputDialog("CPF:");
-            String numStr = JOptionPane.showInputDialog("Número da conta:");
-            if (numStr == null) return; // Cancelar se fechar o dialog
+            int num = Integer.parseInt(JOptionPane.showInputDialog("Número da conta:"));
 
-            int numero = Integer.parseInt(numStr);
-            Cliente cliente = new Cliente(nome, cpf);
-            ContaCorrente conta = new ContaCorrente(numero, cliente);
-
-            banco.adicionarConta(conta);
-            areaTexto.setText("Conta criada com sucesso!\n" + conta);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Erro: " + e.getMessage());
-        }
+            Cliente c = new Cliente(nome, cpf);
+            Conta nova = (tipo == 1) ? new ContaPoupanca(num, c) : new ContaCorrente(num, c);
+            
+            banco.adicionarConta(nova);
+            areaTexto.setText("Sucesso!\n" + nova);
+        } catch (Exception e) { JOptionPane.showMessageDialog(this, "Erro: " + e.getMessage()); }
     }
 
     private void depositar() {
         try {
-            int numero = Integer.parseInt(JOptionPane.showInputDialog("Número da conta:"));
-            double valor = Double.parseDouble(JOptionPane.showInputDialog("Valor do depósito:"));
-
-            Conta conta = banco.buscarConta(numero);
-            conta.depositar(valor);
-            areaTexto.setText("Depósito realizado!\nNovo saldo: R$ " + String.format("%.2f", conta.getSaldo()));
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Erro: " + e.getMessage());
-        }
+            int num = Integer.parseInt(JOptionPane.showInputDialog("Nº Conta:"));
+            double val = Double.parseDouble(JOptionPane.showInputDialog("Valor:"));
+            banco.buscarConta(num).depositar(val);
+            areaTexto.setText("Depósito OK!");
+        } catch (Exception e) { JOptionPane.showMessageDialog(this, "Erro: " + e.getMessage()); }
     }
 
     private void sacar() {
         try {
-            int numero = Integer.parseInt(JOptionPane.showInputDialog("Número da conta:"));
-            double valor = Double.parseDouble(JOptionPane.showInputDialog("Valor do saque:"));
-
-            Conta conta = banco.buscarConta(numero);
-            conta.sacar(valor);
-            areaTexto.setText("Saque realizado!\nNovo saldo: R$ " + String.format("%.2f", conta.getSaldo()));
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Erro: " + e.getMessage());
-        }
+            int num = Integer.parseInt(JOptionPane.showInputDialog("Nº Conta:"));
+            double val = Double.parseDouble(JOptionPane.showInputDialog("Valor:"));
+            banco.buscarConta(num).sacar(val);
+            areaTexto.setText("Saque realizado!");
+        } catch (Exception e) { JOptionPane.showMessageDialog(this, "Erro: " + e.getMessage()); }
     }
 
     private void transferir() {
         try {
-            int origem = Integer.parseInt(JOptionPane.showInputDialog("Conta origem:"));
-            int destino = Integer.parseInt(JOptionPane.showInputDialog("Conta destino:"));
-            double valor = Double.parseDouble(JOptionPane.showInputDialog("Valor:"));
-
-            banco.transferir(origem, destino, valor);
-            areaTexto.setText("Transferência realizada com sucesso!");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Erro: " + e.getMessage());
-        }
+            int ori = Integer.parseInt(JOptionPane.showInputDialog("Nº Origem:"));
+            int des = Integer.parseInt(JOptionPane.showInputDialog("Nº Destino:"));
+            double val = Double.parseDouble(JOptionPane.showInputDialog("Valor:"));
+            banco.transferir(ori, des, val);
+            areaTexto.setText("Transferência concluída!");
+        } catch (Exception e) { JOptionPane.showMessageDialog(this, "Erro: " + e.getMessage()); }
     }
 
     private void verExtrato() {
         try {
-            int numero = Integer.parseInt(JOptionPane.showInputDialog("Número da conta:"));
-            Conta conta = banco.buscarConta(numero);
-            
-            StringBuilder sb = new StringBuilder();
-            sb.append("Extrato da Conta: ").append(conta.getNumero()).append("\n");
-            sb.append("Cliente: ").append(conta.getCliente().getNome()).append("\n");
-            sb.append("----------------------------------\n");
-            for (Transacao t : conta.getHistorico()) {
-                sb.append(t.toString()).append("\n");
-            }
-            sb.append("----------------------------------\n");
-            sb.append("Saldo atual: R$ ").append(String.format("%.2f", conta.getSaldo()));
-            
-            areaTexto.setText(sb.toString());
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Erro: " + e.getMessage());
-        }
+            int num = Integer.parseInt(JOptionPane.showInputDialog("Nº Conta:"));
+            areaTexto.setText(banco.buscarConta(num).getExtratoParaTela());
+        } catch (Exception e) { JOptionPane.showMessageDialog(this, "Erro: " + e.getMessage()); }
+    }
+
+    private void aplicarRendimento() {
+        try {
+            int num = Integer.parseInt(JOptionPane.showInputDialog("Nº Conta Poupança:"));
+            Conta c = banco.buscarConta(num);
+            if (c instanceof ContaPoupanca) {
+                ((ContaPoupanca) c).aplicarRendimento(0.005); // 0.5% padrão
+                areaTexto.setText("Rendimento aplicado!\n" + c);
+            } else { JOptionPane.showMessageDialog(this, "Não é uma poupança."); }
+        } catch (Exception e) { JOptionPane.showMessageDialog(this, "Erro: " + e.getMessage()); }
     }
 }

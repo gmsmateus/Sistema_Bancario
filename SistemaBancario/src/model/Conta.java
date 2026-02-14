@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Conta {
-
     protected int numero;
     protected Cliente cliente;
     protected double saldo;
@@ -17,71 +16,43 @@ public abstract class Conta {
         this.saldo = 0.0;
     }
 
-    public int getNumero() {
-        return numero;
-    }
-
-    public Cliente getCliente() {
-        return cliente;
-    }
-
-    public double getSaldo() {
-        return saldo;
-    }
-
-    public List<Transacao> getHistorico() {
-        return historico;
-    }
-
-    public void setSaldo(double saldo) {
-        this.saldo = saldo;
-    }
-
     public void depositar(double valor) {
-        if (valor <= 0) {
-            throw new IllegalArgumentException("Valor de depósito deve ser positivo.");
-        }
-
+        if (valor <= 0) throw new IllegalArgumentException("Valor positivo obrigatório.");
         saldo += valor;
         historico.add(new Transacao("Depósito", valor));
     }
 
     public void sacar(double valor) throws SaldoInsuficienteException {
-        if (valor <= 0) {
-            throw new IllegalArgumentException("Valor de saque deve ser positivo.");
-        }
-
-        if (valor > saldo) {
-            throw new SaldoInsuficienteException("Saldo insuficiente para saque.");
-        }
-
+        if (valor <= 0) throw new IllegalArgumentException("Valor positivo obrigatório.");
+        if (valor > saldo) throw new SaldoInsuficienteException("Saldo insuficiente.");
         saldo -= valor;
         historico.add(new Transacao("Saque", valor));
     }
 
-    public void exibirExtrato() {
-        System.out.println("Extrato da Conta " + numero);
-        System.out.println("Cliente: " + cliente.getNome());
-        System.out.println("----------------------------------");
-
+    public String getExtratoParaTela() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("===== EXTRATO DA CONTA ").append(numero).append(" =====\n");
+        sb.append("Titular: ").append(cliente.getNome()).append("\n");
+        sb.append("----------------------------------\n");
         if (historico.isEmpty()) {
-            System.out.println("Nenhuma transação realizada.");
+            sb.append("Sem movimentações.\n");
         } else {
-            for (Transacao t : historico) {
-                System.out.println(t);
-            }
-        }   
-
-        System.out.println("----------------------------------");
-        System.out.println("Saldo atual: R$ " + saldo);
+            for (Transacao t : historico) sb.append(t.toString()).append("\n");
+        }
+        sb.append("----------------------------------\n");
+        sb.append(String.format("SALDO ATUAL: R$ %.2f", saldo));
+        return sb.toString();
     }
+
+    // Getters básicos
+    public int getNumero() { return numero; }
+    public Cliente getCliente() { return cliente; }
+    public double getSaldo() { return saldo; }
+    public List<Transacao> getHistorico() { return historico; }
+    public void setSaldo(double saldo) { this.saldo = saldo; }
 
     @Override
     public String toString() {
-        return "Conta{" +
-                "numero=" + numero +
-                ", cliente=" + cliente.getNome() +
-                ", saldo=" + saldo +
-                '}';
+        return String.format("Conta: %d | Titular: %s | Saldo: R$ %.2f", numero, cliente.getNome(), saldo);
     }
 }

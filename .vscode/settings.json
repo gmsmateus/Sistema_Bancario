@@ -1,0 +1,8 @@
+{
+    "java.project.sourcePaths": [
+        "SistemaBancario\\src"
+    ],
+    "java.project.referencedLibraries": [
+        "d:\\Downloads\\gson-2.10.1.jar"
+    ]
+}

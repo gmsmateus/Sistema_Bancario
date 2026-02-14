@@ -1,4 +1,5 @@
-💰 Sistema Bancário Pro
+💰 Sistema Bancário 
+
 Este é um projeto que desenvolvi para consolidar meus conhecimentos em Programação Orientada a Objetos (POO) e interfaces gráficas. O objetivo foi simular o núcleo de um sistema bancário real, focando em segurança de dados e organização lógica das operações.
 
 🎯 Sobre o Projeto

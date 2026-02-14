@@ -1,66 +1,50 @@
 package service;
 
+import com.google.gson.*;
 import model.*;
-
 import java.io.*;
-import java.util.List;
 
 public class PersistenciaService {
+    private static final String ARQUIVO = "contas.json";
+    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    private static final String ARQUIVO = "contas.txt";
-
-    public static void salvar(List<Conta> contas) {
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(ARQUIVO))) {
-
+    public static void salvar(java.util.List<Conta> contas) {
+        try (FileWriter writer = new FileWriter(ARQUIVO)) {
+            JsonArray jsonArray = new JsonArray();
             for (Conta conta : contas) {
-
-                writer.write(
-                        conta.getNumero() + ";" +
-                        conta.getCliente().getNome() + ";" +
-                        conta.getCliente().getCpf() + ";" +
-                        conta.getSaldo()
-                );
-
-                writer.newLine();
+                JsonObject obj = gson.toJsonTree(conta).getAsJsonObject();
+                obj.addProperty("tipoConta", conta instanceof ContaPoupanca ? "POUPANCA" : "CORRENTE");
+                jsonArray.add(obj);
             }
-
+            gson.toJson(jsonArray, writer);
         } catch (IOException e) {
-            System.out.println("Erro ao salvar contas: " + e.getMessage());
+            System.err.println("Erro ao salvar: " + e.getMessage());
         }
     }
 
     public static void carregar(BancoService banco) {
-
         File file = new File(ARQUIVO);
+        if (!file.exists()) return;
 
-        if (!file.exists()) {
-            return;
-        }
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(ARQUIVO))) {
-
-            String linha;
-
-            while ((linha = reader.readLine()) != null) {
-
-                String[] partes = linha.split(";");
-
-                int numero = Integer.parseInt(partes[0]);
-                String nome = partes[1];
-                String cpf = partes[2];
-                double saldo = Double.parseDouble(partes[3]);
-
-                Cliente cliente = new Cliente(nome, cpf);
-                Conta conta = new ContaCorrente(numero, cliente);
-
-                conta.setSaldo(saldo); // restaura saldo
-
+        try (FileReader reader = new FileReader(ARQUIVO)) {
+            JsonElement jsonElement = JsonParser.parseReader(reader);
+            if (jsonElement.isJsonNull()) return;
+            
+            JsonArray jsonArray = jsonElement.getAsJsonArray();
+            for (JsonElement element : jsonArray) {
+                JsonObject obj = element.getAsJsonObject();
+                String tipo = obj.get("tipoConta").getAsString();
+                
+                Conta conta;
+                if ("POUPANCA".equals(tipo)) {
+                    conta = gson.fromJson(obj, ContaPoupanca.class);
+                } else {
+                    conta = gson.fromJson(obj, ContaCorrente.class);
+                }
                 banco.adicionarConta(conta);
             }
-
         } catch (Exception e) {
-            System.out.println("Erro ao carregar contas: " + e.getMessage());
+            System.err.println("Erro ao carregar: " + e.getMessage());
         }
     }
 }
