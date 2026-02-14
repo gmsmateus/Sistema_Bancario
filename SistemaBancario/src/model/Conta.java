@@ -33,6 +33,10 @@ public abstract class Conta {
         return historico;
     }
 
+    public void setSaldo(double saldo) {
+        this.saldo = saldo;
+    }
+
     public void depositar(double valor) {
         if (valor <= 0) {
             throw new IllegalArgumentException("Valor de depósito deve ser positivo.");

@@ -2,6 +2,8 @@ package app;
 
 import model.*;
 import service.BancoService;
+import service.PersistenciaService;
+
 //import exception.*;
 import java.util.Scanner;
 
@@ -11,6 +13,7 @@ public class App {
 
         Scanner scanner = new Scanner(System.in);
         BancoService banco = new BancoService();
+        PersistenciaService.carregar(banco);
 
         boolean rodando = true;
 
@@ -95,6 +98,7 @@ public class App {
 
                     case 0:
                         rodando = false;
+                        PersistenciaService.salvar(banco.getContas());
                         System.out.println("Encerrando sistema...");
                         break;
 

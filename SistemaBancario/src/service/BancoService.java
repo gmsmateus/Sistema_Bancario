@@ -49,4 +49,8 @@ public class BancoService {
         origem.sacar(valor);
         destino.depositar(valor);
     }
+
+    public List<Conta> getContas() {
+        return contas;
+    }
 }
