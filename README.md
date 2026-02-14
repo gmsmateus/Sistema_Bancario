@@ -1,39 +1,75 @@
-💰 Sistema Bancário 
+💰 Sistema Bancário
 
-Este é um projeto que desenvolvi para consolidar meus conhecimentos em Programação Orientada a Objetos (POO) e interfaces gráficas. O objetivo foi simular o núcleo de um sistema bancário real, focando em segurança de dados e organização lógica das operações.
+Este projeto foi desenvolvido para consolidar meus conhecimentos em Programação Orientada a Objetos (POO), arquitetura em camadas e desenvolvimento de interfaces gráficas com Java.
+
+O objetivo foi simular o núcleo de um sistema bancário real, priorizando organização, separação de responsabilidades e tratamento adequado de erros de domínio.
 
 🎯 Sobre o Projeto
-O sistema permite o gerenciamento completo de contas bancárias, desde a abertura da conta até a realização de transações complexas como transferências e geração de extratos detalhados.
 
-Foquei na construção de um código escalável e robusto: o sistema utiliza exceções personalizadas para garantir que operações inválidas (como sacar mais do que o saldo disponível) sejam barradas e reportadas corretamente ao usuário.
+O sistema permite o gerenciamento completo de contas bancárias, incluindo:
 
-🛠️ Tecnologias e conceitos utilizados
-Java Swing – Interface gráfica intuitiva com diálogos de entrada e alertas de feedback.
+Abertura de contas (Corrente e Poupança)
 
-Persistência em Arquivo (.txt) – Sistema de salvamento automático que mantém os dados das contas e saldos mesmo após fechar o programa.
+Depósitos e saques com validação de saldo
 
-Arquitetura em Camadas (MVC) – Separação clara entre a visualização (View), a lógica de negócio (Service) e os dados (Model).
+Transferências entre contas
 
-Tratamento de Exceções Personalizadas – Criação de erros específicos para o domínio bancário, melhorando a rastreabilidade de falhas.
+Geração de extrato detalhado com histórico de transações
 
-POO Avançada – Uso intensivo de Classes Abstratas, Herança e Polimorfismo para diferenciar tipos de conta (Corrente vs. Poupança).
+Aplicação de rendimento para contas poupança
+
+As operações são protegidas por exceções personalizadas, garantindo que ações inválidas (como saldo insuficiente ou conta inexistente) sejam tratadas de forma controlada.
+
+🛠️ Tecnologias e Conceitos Utilizados
+
+Java (JDK 17+)
+
+Java Swing – Interface gráfica com layout organizado e feedback visual ao usuário.
+
+Gson (JSON) – Persistência de dados em arquivo contas.json.
+
+Arquitetura em Camadas (MVC) – Separação entre:
+
+model (entidades)
+
+service (regras de negócio)
+
+view (interface gráfica)
+
+Exceções Personalizadas – Controle de erros específicos do domínio bancário.
+
+POO Avançada – Uso de:
+
+Classes abstratas
+
+Herança
+
+Polimorfismo
+
+Encapsulamento
 
 🚀 Principais Funcionalidades
-Gestão de Contas – Cadastro de clientes vinculados a números de conta exclusivos.
 
-Operações Financeiras – Depósitos, saques e transferências entre contas com validação de saldo.
+✔ Gestão de contas com validação de número e CPF únicos
 
-Histórico e Extrato – Registro de cada movimentação (tipo, valor e data/hora) disponível para consulta instantânea.
+✔ Depósitos, saques e transferências com validação de regras
 
-Rendimento Automático – Lógica preparada para aplicação de taxas em contas do tipo poupança.
+✔ Histórico completo de transações com data e hora
 
-Persistência Automática – Os dados são carregados ao iniciar e salvos ao encerrar a aplicação.
+✔ Aplicação de rendimento em contas poupança
 
-📂 Como rodar o projeto
-Ter o Java (JDK 17 ou superior) instalado na máquina.
+✔ Persistência automática ao fechar a aplicação
 
-Clonar o repositório ou baixar os arquivos fonte.
+✔ Carregamento automático dos dados ao iniciar
 
-Executar a classe App.java (localizada no pacote app).
+📂 Como Executar
+
+1. Ter o Java JDK 17 ou superior instalado.
+
+2. Clonar o repositório:
+
+  git clone <url-do-repositorio>
+
+3. Executar a classe App.java localizada no pacote app.
 
 Projeto desenvolvido por Mateus Gomes
